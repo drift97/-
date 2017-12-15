@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="header.css" />
+        <script src='Chart.min.js'></script>
+    </head>
+    <body>
+		<p>Случайные числа <input type="button" value="Запустить" onclick="start(20)">
+        </p>Введите число случ.величин<input type="text" id="value" value="100"></p>
+        </p>Введите мин. границу<input type="text" id="a" value="0"></p>
+        </p>Введите макс. границу<input type="text" id="b" value="10"></p>
+		<div><canvas id="gistogramma" width="500" height="250"></canvas></br>Гистограмма распределения по диапазонам</div>
+        <div><canvas id="buyers" width="500" height="250" style="width: 600px; height: 400px;"></canvas></br>Функция распределения</div>
+		<div><canvas id="buyers2" width="500" height="250" style="width: 600px; height: 400px;"></canvas></br>Плотность распределения</div>
+        <script src="main.js">
+        </script>
+    </body>
+</html>

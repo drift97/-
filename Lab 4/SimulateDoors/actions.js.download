@@ -1,0 +1,164 @@
+//////////////////////////////////////////////////////////////////////
+// some magic actions
+//////////////////////////////////////////////////////////////////////
+
+var tooltiper = null;
+
+// show tooltip
+//////////////////////////////////////////////////////////////////////
+function showtooltip(ev, txt) {
+
+  var px = ev.clientX;
+  var py = ev.clientY;
+
+  if (!txt) try { txt = ev.target.title } catch (e) { txt = 'empty message'; }
+
+  if (!tooltiper) {
+      tooltiper = jQuery("<div class='tooltip' id='tooltiper'></div>");
+      jQuery('body').append(tooltiper);
+  }
+
+  tooltiper.html(txt);
+
+  tooltiper.css('top', 5 + py + jQuery(window).scrollTop() + 'px').
+    css('visibility', 'visible').
+    css('width', 'auto').
+    hide();
+
+  // IE
+  if (tooltiper.width() > 250) tooltiper.css('width', 250);
+  if (tooltiper.width() < 160 && txt.length > 20) tooltiper.css('width', 160);
+
+  if (px > (2 * jQuery(window).width() / 3))
+      tooltiper.css('left', (px - tooltiper.width() - 30) + 'px');
+  else
+      tooltiper.css('left', (px + 20) + 'px');
+
+  if (py > 200)
+      tooltiper.css('top', py + jQuery(window).scrollTop() - tt.height() - 25);
+
+  tooltiper.fadeIn('fast');
+
+}
+
+// hide tooltip
+//////////////////////////////////////////////////////////////////////
+function hidetooltip() {
+  if (!tooltiper) {
+      var tt = jQuery('#tooltiper');
+      tt.css('visibility', 'hidden');
+  }else {
+      tooltiper.css('visibility', 'hidden');
+  }
+}
+
+
+// geo information
+//////////////////////////////////////////////////////////////////////
+function geo_hello(boxname) {
+  jQuery.get('/geoips.py',
+          {},
+          function gj(data) {
+          jQuery(boxname).html(data).hide().fadeIn('slow');
+          },
+          'html');
+}
+
+
+// function returns 32-character string of spaces and asteriks
+//////////////////////////////////////////////////////////////////////
+function gettime_unix() {
+
+  var a = parseInt((new Date()).getTime() / 1000);
+  var b = '';
+
+  while (a > 0) {
+    if (a % 2) b += '*';
+    else b += ' ';
+    a = a >> 1;
+  }
+
+  return b;
+
+}
+
+
+var bclox = null;
+
+//
+//////////////////////////////////////////////////////////////////////
+function unixbarclox(daddy) {
+
+  if (bclox !== null) {
+
+    var c = gettime_unix();
+
+    bclox.children().each(
+            function(i) {
+                if (c.charAt(i) == ' ')
+                    this.style.visibility = 'hidden';
+                else
+                    this.style.visibility = 'visible'; 
+                });
+
+    setTimeout(unixbarclox, 333);
+
+  }else {
+
+    try {
+
+      var holder = jQuery(daddy);
+
+      var b = '<div id="unixbarclox">';
+      for (var i = 0; i < 32; i++) b += '<span></span>';
+      b += '</div>';
+
+      bclox = jQuery(b);
+      bclox.mouseenter(unixbarclox_showtooltip).mouseleave(hidetooltip);
+
+      holder.append(bclox);
+
+      setTimeout(unixbarclox, 500);
+
+    }catch (e) {}
+
+  }
+}
+
+
+
+//
+//////////////////////////////////////////////////////////////////////
+function unixbarclox_showtooltip(e) {
+
+    showtooltip(e, 'Бинарные 32-разрядные часы&nbsp;UNIXTIME. ' +
+            'Прошло с начала эпохи &mdash; ' +
+            parseInt((new Date()).getTime() / 1000).toString() +
+            '&nbsp;секунд.');
+}
+
+
+//
+//////////////////////////////////////////////////////////////////////
+function init_index(box) {
+
+  //
+  unixbarclox('#topline');
+
+  //
+  geo_hello('#geo_hello');
+
+}
+
+// map page
+// loads xml file with points
+//////////////////////////////////////////////////////////////////////
+function readMappers(pParser) {
+  jQuery.get('/geoips.py?list', {}, pParser, 'xml');
+}
+
+//
+//////////////////////////////////////////////////////////////////////
+function pointsParser(xdoc) {
+}
+

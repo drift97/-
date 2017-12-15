@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v3.min.js"> </script>
+    <style>
+        .axis path, .axis line {
+            fill: none;
+            stroke: #333;
+        }
+        .axis .grid-line {
+            stroke: #000;
+            stroke-opacity: 0.5;
+        }
+        .axis text {
+            font: 15px Verdana;
+        }
+        .bar {
+            stroke: none;
+            fill: #20b425;
+        }
+    </style>
+<body>
+<div>
+    <input type="button" value="Ввести новые данные" onclick="location.reload()">
+    <input type="button" value="Вернуться на главную страницу" onclick='location.href="index.html"'>
+
+</div>
+<div class="gistagramma" id="gist">
+<script type="text/javascript">
+
+    var randomValue = prompt('Введите кол-во БСЧ:', 1000);
+
+        function diapazon (arr){
+            var arr2 = [];
+            for (i = 0; i<arr.length; i++) {
+                arr2.push(parseInt(arr[i]));
+            }
+            newArray = arr2.reduce((acc, el) =>
+                {acc[el] = (acc[el] || 0) + 1; return acc;}, {});
+            return newArray;
+        }
+
+        function preob (object){
+            arrFinal = [];
+            for (var key in object){
+                arrFinal.push({x:(parseInt(key)), y:object[key]/randomValue});
+            }
+            return arrFinal;
+        }
+
+        function random(value){
+            var arrayRandom = [];
+            for (var i = 0; i <= value; i++){
+                arrayRandom.push(Math.random() * (10 - 0) + 0);
+            }
+            fourMethod(value);
+            return arrayRandom;
+        }
+
+        function fourMethod(value){
+            var arr = [];
+            for (var i = 0; i <= value; i++){
+                arr.push(Math.random() * (1 - 0) + 0);
+            }
+
+            var n = arr.length, s = 2, sum = 0;
+
+            for (i = 0; i < n - s; i++) {
+                sum = sum + arr[i] * arr[i + s];
+            }
+
+            var R = 1.0 / (12 * n - s) * sum;
+            alert ("Коэффициент корреляции = " + R);
+            return R;
+        }
+
+        var height = 500,
+            width = 1200,
+            margin = 50,
+            padding = 10,
+            data = preob(diapazon(random(randomValue)));
+
+        var color = d3.scale.category10();
+
+        var svg = d3.select("body").append("svg")
+            .attr("class", "axis")
+            .attr("width", width)
+            .attr("height", height);
+
+        // длина оси X= ширина контейнера svg - отступ слева и справа
+        var xAxisLength = width - 2 * margin;
+
+        // длина оси Y = высота контейнера svg - отступ сверху и снизу
+        var yAxisLength = height - 2 * margin;
+
+        // функция интерполяции значений на ось Х
+        var scaleX = d3.scale.linear()
+            .domain([0, data.length])
+            .range([0, xAxisLength]);
+
+        // функция интерполяции значений на ось Y
+        var scaleY = d3.scale.linear()
+            .domain([1, 0])
+            .range([10, yAxisLength]);
+
+        // создаем ось X
+        var xAxis = d3.svg.axis()
+            .scale(scaleX)
+            .orient("bottom");
+        // создаем ось Y
+        var yAxis = d3.svg.axis()
+            .scale(scaleY)
+            .orient("left");
+
+        // отрисовка оси Х
+        svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform",  // сдвиг оси вниз и вправо
+                "translate(" + margin + "," + (height - margin) + ")")
+            .call(xAxis);
+
+        // отрисовка оси Y
+        svg.append("g")
+            .attr("class", "y-axis")
+            .attr("transform", // сдвиг оси вниз и вправо на margin
+                "translate(" + margin + "," + margin + ")")
+            .call(yAxis);
+
+        // рисуем горизонтальные линии
+        d3.selectAll("g.y-axis g.tick")
+            .append("line")
+            .classed("grid-line", true)
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", xAxisLength)
+            .attr("y2", 0);
+        // создаем объект g для прямоугольников
+        var g =svg.append("g")
+            .attr("class", "body")
+            .attr("transform",  // сдвиг объекта вправо
+                "translate(" + margin + ", 0 )");
+        // связываем данные с прямоугольниками
+        g.selectAll("rect.bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar");
+        // устанавливаем параметры прямоугольников
+        g.selectAll("rect.bar")
+            .data(data)
+            .attr("x", function (d) {
+                return scaleX(d.x);
+            })
+            .attr("y", function (d) {
+                return scaleY(d.y) + margin;
+            })
+            .attr("height", function (d) {
+                return yAxisLength - scaleY(d.y);
+            })
+            .attr("width", function(d){
+
+                return Math.floor(xAxisLength / data.length) - padding;
+            });
+
+
+
+</script>
+</div>
+</body>
+</html>

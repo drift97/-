@@ -1,0 +1,48 @@
+function monty_hall(N)
+{
+	var door = Math.floor(Math.random()*N);
+	var player_choice = Math.floor(Math.random()*N);
+	var host_choice;
+	
+	if (door==player_choice) host_choice = (door+1)%N;
+	else host_choice = door;
+	return new Array(door, player_choice, host_choice);
+}
+
+var box,
+    win_s1 = 0,
+    win_s2 = 0,
+    M = prompt("Введите кол-во итераций"),
+    m = 0,
+    tix = 0;
+
+function start_simulation(){
+
+  box = jQuery('#playground');
+  box.children().remove();
+
+  m = 0;
+  win_s1 = 0;
+  win_s2 = 0;
+
+  tix = setInterval(do_monty_hall, 0);
+
+  return false;
+}
+
+function do_monty_hall()
+	{
+		m++;
+		var b = monty_hall(3);
+		var boxic;
+
+		if (b[0]==b[1]){win_s1++;}
+		if (b[0]==b[2]){win_s2++;}
+		if (m>=M)
+	{
+    clearInterval(tix);
+    box.append(jQuery("<p>Вероятности выиграть:<br/> Без учета замены переменной  " + Math.round(win_s1/m*100) + "%.<br/>С учетом замены переменной " + Math.round(win_s2/m*100) + "%.</p><a onclick='javascript:start_simulation();' href='#'>Повторить симуляцию</a>"));
+  }
+}
+
+
